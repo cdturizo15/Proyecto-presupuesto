@@ -1,0 +1,71 @@
+@model TransactionCreateViewModel
+
+@{
+    ViewData["Title"] = "Crear transaccion";
+}
+
+<h1>Crear transaccion</h1>
+<h5>Aqui puedas crear tus transacciones</h5>
+
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <div class="mb-3 bg gray">
+        <label class="form-label" asp-for="AccountId">Cuenta*</label>
+        <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select"></select>
+        <span asp-validation-for="AccountId"></span>
+    </div>
+
+    <div class="mb-3 bg gray">
+        <label class="form-label" asp-for="OperationTypeId">Tipo de operacion*</label>
+        <select id="OperationTypeId" asp-for="OperationTypeId" asp-items="Html.GetEnumSelectList<OperationTypeId>()" class="form-select"></select>
+    </div>
+
+    <div class="mb-3 bg gray">
+        <label class="form-label" asp-for="CategoryId">Categoria*</label>
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select"></select>
+    </div>
+
+    <div class="mb-3 bg-gray">
+        <label asp-for="Amount" class="form-label">Monto*</label>
+        <input  asp-for="Amount" placeholder="0.00" class="form-control" />
+    </div>
+
+    <div class="mb-3 bg-gray">
+        <label asp-for="DateTransaction" class="form-label">Fecha*</label>
+        <input asp-for="DateTransaction" placeholder="0.00" class="form-control" />
+    </div>
+
+    <div class="mb-3 bg-gray">
+        <label asp-for="Note" class="form-label">Nota</label>
+        <textarea class="form-control" asp-for="Note"></textarea>
+        <span asp-validation-for="Note" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Enviar</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+        const urlAction = '@Url.Action("GetCategories", "Transactions")';
+        const operationType = document.getElementById("OperationTypeId");
+        operationType.addEventListener("change", async function(){
+        const operationTypeValue = operationType.value;
+        const res = await fetch(urlAction, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: operationTypeValue
+        });
+        const data = await res.json();
+        const categories = data.map(category => `<option value="${category.id}">${category.name}</option>`);
+        const select = document.getElementById("CategoryId");
+        select.innerHTML = categories;
+    });
+    </script>
+    
+}

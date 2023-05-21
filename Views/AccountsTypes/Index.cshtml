@@ -1,0 +1,62 @@
+﻿@model IEnumerable<AccountType>
+@{
+    ViewData["Title"] = "Lista Tipos cuentas";
+}
+
+<h1>Tipos cuentas</h1>
+<h5>Saludos, Aqui se encuentra la lista de tus cuentas</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="reorder">
+        @foreach (var accountType in Model)
+        {
+            <tr>
+                <td>
+                    @accountType.Name
+                </td>
+                <td>
+                    <input type="hidden" value="@accountType.Id" class="ids">
+                    <a asp-route-id="@accountType.Id" asp-action="Edit" class="btn btn-primary">Editar</a>
+                    <a asp-route-id="@accountType.Id" asp-action="Delete" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Create"  class="btn btn-success mb-3">Crear</a>
+
+@section Scripts
+{
+    <script>
+        const urlOrder = '@Url.Action("Order")';
+        $(function () {
+            $("#reorder").sortable({
+                stop: async function(e, ui){
+                    const ids = getIds();
+                    await sendIdsToBackend(ids);
+                }
+            });
+            function getIds(){
+            const ids = $(".ids").map(function(){return $(this).val()}).get();
+            console.log(ids);
+            return ids;
+            }
+            async function sendIdsToBackend(ids) {
+                var data = JSON.stringify(ids);
+                await fetch(urlOrder, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: data
+                });
+            }
+        })
+        
+    </script>
+}

@@ -1,0 +1,36 @@
+@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Categorias";
+}
+
+<h1>Categorias</h1>
+<h5>Saludos, Aqui se encuentra la lista de tus categorias</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>
+                    @category.Name
+                </td>
+                <td>
+                    @category.OperationTypeId
+                </td>
+                <td>
+                    <input type="hidden" value="@category.Id" class="ids">
+                    <a asp-route-id="@category.Id" asp-action="Edit" class="btn btn-primary">Editar</a>
+                    <a asp-route-id="@category.Id" asp-action="Delete" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Create"  class="btn btn-success mb-3">Crear</a>
+
